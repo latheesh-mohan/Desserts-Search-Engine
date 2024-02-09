@@ -83,16 +83,29 @@ extension RecipeDetailViewController: UITableViewDelegate, UITableViewDataSource
 
 extension RecipeDetailViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let screenHeight = AppUtilities.shared.getScreenHeight()
-        let totalHeight = screenHeight - view.safeAreaInsets.top
-        let offsetDiff = previousOffsetState - scrollView.contentOffset.y
-        previousOffsetState = scrollView.contentOffset.y
-        recipeImageViewHeight.constant += offsetDiff
-        tableViewHeight.constant = totalHeight - recipeImageViewHeight.constant + 8.0
-        if(recipeImageViewHeight.constant <= 0) {
-            tableViewPaddingTop.constant = 8.0
-        } else {
-            tableViewPaddingTop.constant = -16.0
+            let screenHeight = AppUtilities.shared.getScreenHeight()
+            let totalHeight = screenHeight - view.safeAreaInsets.top
+            let offsetDiff = previousOffsetState - scrollView.contentOffset.y
+            
+            if scrollView.contentOffset.y > 300 {
+                recipeImageViewHeight.constant = 0.0
+            } else {
+                let maxImageHeight: CGFloat = 300.0
+                let minImageHeight: CGFloat = 0.0
+                
+                var newHeight = maxImageHeight - scrollView.contentOffset.y
+                newHeight = max(minImageHeight, newHeight)
+                recipeImageViewHeight.constant = newHeight
+            }
+        
+            tableViewHeight.constant = totalHeight - recipeImageViewHeight.constant + 8.0
+            
+            if(recipeImageViewHeight.constant <= 0) {
+                tableViewPaddingTop.constant = 8.0
+            } else {
+                tableViewPaddingTop.constant = -16.0
+            }
+            
+            previousOffsetState = scrollView.contentOffset.y
         }
-    }
 }
