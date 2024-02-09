@@ -31,8 +31,9 @@ class RecipeViewModel: RecipeViewModelProtocol {
     }
     
     func getRecipes(completion: @escaping () -> Void) {
-        NetworkManager.fetchRecipes { recipes, error in
-            guard let recipes else { 
+        NetworkManager.fetchRecipes { [weak self] recipes, error in
+            guard let self,
+                  let recipes else {
                 print(Constants.ERROR_RETREIVAL_DATA)
                 return
             }
@@ -42,8 +43,9 @@ class RecipeViewModel: RecipeViewModelProtocol {
     }
     
     func getRecipeBy(_ id: String, completion: @escaping () -> Void) {
-        NetworkManager.fetchRecipe(by: id) { recipes, string in
-            guard let recipes,
+        NetworkManager.fetchRecipe(by: id) {  [weak self] recipes, string in
+            guard let self,
+                  let recipes,
                   let recipe = recipes.first else {
                 print(Constants.ERROR_RETREIVAL_DATA)
                 return
